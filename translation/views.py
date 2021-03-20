@@ -5,6 +5,10 @@ from analytics.translator.basic_translation import BasicTranslation
 
 
 def translateView(request):
+
+    if request.method == "POST":
+        pass
+
     context = {
 
     }
