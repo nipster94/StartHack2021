@@ -3,6 +3,21 @@
 {% block title %}| Translation {% endblock title %}
 
 {% block content %}
-    <h1>Translation page!</h1>
+    <br>
+    <br>
+
+    <h1>Translation</h1>
+    <p>Upload a PDF file to summarise and translate the text.</p>
+
+    <br>
+    <br>
+
+    <form action="" enctype='multipart/form-data' method="post">
+        {% csrf_token %}
+        <label>Upload a file</label>
+        <input type="file" name="file">
+        <p>Only accepts pdf files</p>
+        <button type="submit">Upload</button>
+    </form>
 
 {% endblock content %}
