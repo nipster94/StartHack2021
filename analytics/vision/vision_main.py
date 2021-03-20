@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-import os, requests, uuid, json
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+import requests, uuid, json
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from msrest.authentication import CognitiveServicesCredentials
+from analytics.translator.basic_translation import BasicTranslation
 
 from array import array
 import os
@@ -16,12 +20,18 @@ class AnalyzeDocument():
         self.api_key = ""
         self.endpoint = ""
         self.location = ""
+        self.res_file_ = '../template/resources/'
         self.load_config('../template/config.json')
+        self.max_num_retries = 2
 
+        self.basic_trans_ = BasicTranslation()
         if not self.api_key or not self.endpoint:
             raise Exception('Please set/export API key')
 
         self.authentication()
+        # image = Image.open(self.res_file_ + 'de-OP-Bericht-001.jpeg').convert('RGB')
+        image =  open(self.res_file_ + 'de-OP-Bericht-001.jpeg', "rb")
+        self.azure_ocr_image(image,"en")
 
     def load_config(self, file_path):
         file_ = open(file_path)
@@ -51,15 +61,29 @@ class AnalyzeDocument():
     def azure_ocr_by_url(self,url):
         pass
 
-    def azure_orc_image(self,image):
-        pass
+    def azure_ocr_image(self, image, lan_to, lan_from=None):
+        description_results = self.computervision_client.recognize_printed_text_in_stream(image,language='de')
+        if not lan_from:
+            lan_from = description_results.language
+        translated_text_ = ""
+        for region in description_results.regions:
+            region_line_ = ""
+            for line in region.lines:
+                s = ""
+                for word in line.words:
+                    s += word.text + " "
+                region_line_ += s
 
-    def azure_orc_pdf(self,pdf):
+            translated_text_ += self.basic_trans_.translate_text(region_line_,lan_from,lan_to)
+
+        print(translated_text_)
+        return translated_text_
+
+    def azure_ocr_pdf(self,pdf):
         pass
 
     def upload_document(self,file):
         pass
-
 
 
 if __name__ == '__main__':
