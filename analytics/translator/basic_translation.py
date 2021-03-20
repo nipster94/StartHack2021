@@ -13,9 +13,9 @@ class BasicTranslation():
             raise Exception('Please set/export API key')
 
         self.default_translator_path = 'translate?api-version=3.0'
-        self.params_ = '&from=en&to=de&to=it'
 
-        self.constructed_url = self.endpoint + self.default_translator_path + self.params_
+
+        self.constructed_url = self.endpoint + self.default_translator_path
 
         self.headers = {
             'Ocp-Apim-Subscription-Key': self.api_key,
@@ -34,13 +34,25 @@ class BasicTranslation():
         self.location = data['locations']['translator']
 
     def request_data(self, requested_text):
+        params_ = '&from=en&to=de'
         body = [{
             'text': requested_text
         }]
-        request = requests.post(self.constructed_url, headers=self.headers, json=body)
+        request = requests.post(self.constructed_url + params_, headers=self.headers, json=body)
         response = request.json()
-
+        print(response[0]["translations"][0]['text'])
         print(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')))
+
+    def translate_text(self,requested_text,lan_from,lan_to):
+        body = [{
+            'text': requested_text
+        }]
+        params_ = '&from=' + lan_from + '&to=' + lan_to
+        request = requests.post(self.constructed_url+params_, headers=self.headers, json=body)
+        response = request.json()
+        # print(response[0]["translations"][0]['text'])
+        return response[0]["translations"][0]['text']
+
 
 
 if __name__ == '__main__':
