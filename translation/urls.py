@@ -2,5 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.translateView, name="translate"),
+    path("translate", views.translateView, name="translation"),
+    path("", views.homePageView, name="home"),
 ]
