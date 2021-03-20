@@ -1,0 +1,14 @@
+{
+  "api_keys" : {
+    "translator" : "04cf4b884dfa4c62a5a638dd2ab4459e",
+    "vision" : "c5836e10ea864d368d3c3012b4ca6311"
+  },
+  "endpoints" : {
+      "translator" : "https://api.cognitive.microsofttranslator.com/",
+      "vision" : "https://starthackstroage.cognitiveservices.azure.com/"
+  },
+  "locations" : {
+      "translator" : "northeurope",
+      "vision" : "northeurope"
+  }
+}

@@ -1,0 +1,85 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "tagValues": {
+            "type": "object"
+        },
+        "virtualNetworkType": {
+            "type": "string"
+        },
+        "vnet": {
+            "type": "object"
+        },
+        "ipRules": {
+            "type": "array"
+        }
+    },
+    "variables": {
+        "defaultVNetName": "cvCSDefaultVNet9901",
+        "defaultSubnetName": "cvCSDefaultSubnet9901",
+        "defaultAddressPrefix": "13.41.6.0/26"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-04-01",
+            "name": "[if(equals(parameters('virtualNetworkType'), 'External'), parameters('vnet').name, variables('defaultVNetName'))]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[if(equals(parameters('virtualNetworkType'), 'External'), parameters('vnet').addressPrefixes, json(concat('[{\"', variables('defaultAddressPrefix'),'\"}]')))]"
+                },
+                "subnets": [
+                    {
+                        "name": "[if(equals(parameters('virtualNetworkType'), 'External'), parameters('vnet').subnets.subnet.name, variables('defaultSubnetName'))]",
+                        "properties": {
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.CognitiveServices",
+                                    "locations": [
+                                        "[parameters('location')]"
+                                    ]
+                                }
+                            ],
+                            "addressPrefix": "[if(equals(parameters('virtualNetworkType'), 'External'), parameters('vnet').subnets.subnet.addressPrefix, variables('defaultAddressPrefix'))]"
+                        }
+                    }
+                ]
+            },
+            "condition": "[and(and(not(empty(parameters('vnet'))), equals(parameters('vnet').newOrExisting, 'new')), equals(parameters('virtualNetworkType'), 'External'))]"
+        },
+        {
+            "apiVersion": "2017-04-18",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "type": "Microsoft.CognitiveServices/accounts",
+            "kind": "ComputerVision",
+            "tags": "[if(contains(parameters('tagValues'), 'Microsoft.CognitiveServices/accounts'), parameters('tagValues')['Microsoft.CognitiveServices/accounts'], json('{}'))]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "properties": {
+                "customSubDomainName": "[parameters('name')]",
+                "publicNetworkAccess": "[if(equals(parameters('virtualNetworkType'), 'Internal'), 'Disabled', 'Enabled')]",
+                "networkAcls": {
+                    "defaultAction": "[if(equals(parameters('virtualNetworkType'), 'External'), 'Deny', 'Allow')]",
+                    "virtualNetworkRules": "[if(equals(parameters('virtualNetworkType'), 'External'), json(concat('[{\"id\": \"', concat(subscription().id, '/resourceGroups/', parameters('vnet').resourceGroup, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnet').name, '/subnets/', parameters('vnet').subnets.subnet.name), '\"}]')), json('[]'))]",
+                    "ipRules": "[parameters('ipRules')]"
+                }
+            },
+            "dependsOn": [
+                "[if(equals(parameters('virtualNetworkType'), 'External'), parameters('vnet').name, variables('defaultVNetName'))]"
+            ]
+        }
+    ]
+}
