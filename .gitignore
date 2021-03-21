@@ -2,5 +2,6 @@
 __pycache__/
 db.sqlite3
 .idea
-
+analytics/template/resources/*
 analytics/template/config.json
+media/*

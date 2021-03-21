@@ -1,7 +1,7 @@
 {
   "api_keys" : {
-    "translator" : "04cf4b884dfa4c62a5a638dd2ab4459e",
-    "vision" : "c5836e10ea864d368d3c3012b4ca6311"
+    "translator" : "3f4ddcc9c74f4d20a676817e1b9d7341",
+    "vision" : "f075304fb64644c59f9dac90f8ab718f"
   },
   "endpoints" : {
       "translator" : "https://api.cognitive.microsofttranslator.com/",
