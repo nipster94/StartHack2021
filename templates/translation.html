@@ -1,6 +1,6 @@
 {% extends 'partials/_base.html' %}
 
-{% block title %}| Translation {% endblock title %}
+{% block title %} | Translation {% endblock title %}
 
 {% block content %}
     <br>
@@ -14,9 +14,10 @@
 
     <form action="" enctype='multipart/form-data' method="post">
         {% csrf_token %}
-        <label>Upload a file</label>
-        <input type="file" name="file">
-        <p>Only accepts pdf files</p>
+<!--        <label>Upload a file</label>-->
+<!--        <input type="file" name="file">-->
+<!--        <p>Only accepts pdf files</p>-->
+        {{ form.as_p }}
         <button type="submit">Upload</button>
     </form>
 
