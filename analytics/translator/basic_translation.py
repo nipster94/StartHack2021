@@ -14,7 +14,6 @@ class BasicTranslation():
 
         self.default_translator_path = 'translate?api-version=3.0'
 
-
         self.constructed_url = self.endpoint + self.default_translator_path
 
         self.headers = {

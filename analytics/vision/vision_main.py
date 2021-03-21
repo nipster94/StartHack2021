@@ -8,6 +8,7 @@ from azure.cognitiveservices.vision.computervision.models import OperationStatus
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from msrest.authentication import CognitiveServicesCredentials
 from analytics.translator.basic_translation import BasicTranslation
+from analytics.translator.text_translator import TextTranslator
 
 from array import array
 import os
@@ -20,18 +21,19 @@ class AnalyzeDocument():
         self.api_key = ""
         self.endpoint = ""
         self.location = ""
-        self.res_file_ = '../template/resources/'
-        self.load_config('../template/config.json')
         self.max_num_retries = 2
 
-        self.basic_trans_ = BasicTranslation()
-        if not self.api_key or not self.endpoint:
-            raise Exception('Please set/export API key')
+        self.res_file_ = '../template/resources/'
+        self.text_translator_ = TextTranslator()
+        # self.load_config('../template/config.json')
+        # self.basic_trans_ = BasicTranslation()
+        # if not self.api_key or not self.endpoint:
+        #     raise Exception('Please set/export API key')
 
-        self.authentication()
+        # self.authentication()
         # image = Image.open(self.res_file_ + 'de-OP-Bericht-001.jpeg').convert('RGB')
-        image =  open(self.res_file_ + 'de-OP-Bericht-001.jpeg', "rb")
-        self.azure_ocr_image(image,"en")
+        # image =  open(self.res_file_ + 'de-OP-Bericht-001.jpeg', "rb")
+        # self.azure_ocr_image(image,"en")
 
     def load_config(self, file_path):
         file_ = open(file_path)
@@ -40,7 +42,14 @@ class AnalyzeDocument():
         self.endpoint = data['endpoints']['vision']
         self.location = data['locations']['vision']
 
-    def authentication(self):
+    def authentication(self,config_path):
+        config_path += '/analytics/template/config.json'
+        self.load_config(config_path)
+        if not self.api_key or not self.endpoint:
+            raise Exception('Please set/export API key')
+
+        self.text_translator_.authentication(config_path=config_path)
+
         self.computervision_client = ComputerVisionClient(self.endpoint,
                                                      CognitiveServicesCredentials(self.api_key))
 
@@ -74,9 +83,10 @@ class AnalyzeDocument():
                     s += word.text + " "
                 region_line_ += s
 
-            translated_text_ += self.basic_trans_.translate_text(region_line_,lan_from,lan_to)
+            # translated_text_ += self.basic_trans_.translate_text(region_line_,lan_from,lan_to)
+            translated_text_ += self.text_translator_.translate_text(region_line_,lan_from,lan_to)
 
-        print(translated_text_)
+        # print(translated_text_)
         return translated_text_
 
     def azure_ocr_pdf(self,pdf):
