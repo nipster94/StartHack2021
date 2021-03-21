@@ -7,7 +7,6 @@ urlpatterns = [
     path("translate", views.translateGetImageView, name="translation"),
     # path("translate", views.translateGetImageView, name="translate"),
     path("", views.homePageView, name="home"),
-
     path('success', views.success, name = 'success'),
 
 ]
