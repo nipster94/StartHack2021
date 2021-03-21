@@ -13,6 +13,10 @@ _name = ""
 
 
 # Create your views here.
+def homePageView(request):
+    context = {}
+    return render(request, "home.html", context)
+
 def translateGetImageView(request):
     if request.method == "POST":
         form = TranslationForm(request.POST, request.FILES)

@@ -4,8 +4,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("", views.translateGetImageView, name="translate"),
+    path("translate", views.translateGetImageView, name="translate"),
     path('success', views.success, name = 'success'),
+    path("", views.homePageView, name="home"),
 ]
 
 if settings.DEBUG:
