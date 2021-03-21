@@ -8,7 +8,6 @@ urlpatterns = [
     # path("translate", views.translateGetImageView, name="translate"),
     path("", views.homePageView, name="home"),
     path('success', views.success, name = 'success'),
-
 ]
 
 if settings.DEBUG:
